@@ -1,2 +1,8 @@
 /dist
 /*.egg-info
+
+# Mac files
+.DS_Store
+
+#cache files
+__pycache__/
