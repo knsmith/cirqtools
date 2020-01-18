@@ -8,6 +8,7 @@ __all__ = (
     'SingleQuditSubspaceGate',
     'FlipGate',
     'Chrestenson',
+    'ZGate',
 )
 
 
@@ -160,4 +161,28 @@ class Chrestenson(cirq.SingleQubitGate):
         return cirq.CircuitDiagramInfo('[C_r]')
     
 
+class ZGate(cirq.SingleQubitGate):
+    def __init__(self,dimension,degree):
+        self.dimension = dimension
+        self.degree = degree
+
+    def _qid_shape_(self):
+        return (self.dimension,)
+
+    def num_qubits(self):
+        return 1
+
+    def _unitary_(self):
+        u = np.zeros((self.dimension,self.dimension),dtype=np.complex_)
+        for i in range(0,self.dimension):
+            for k in range(0,self.dimension):
+                if i == k:
+                    u[i,k] = np.exp(2*np.pi*(0+1j)*i/self.dimension)
+        
+        u = np.linalg.matrix_power(u, self.degree)
+        
+        return u
+
+    def _circuit_diagram_info(self,args):
+        return cirq.CircuitDiagramInfo(('[Z{:+d}]'.format(self.degree),))
 
