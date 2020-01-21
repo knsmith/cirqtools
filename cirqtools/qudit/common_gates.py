@@ -159,7 +159,7 @@ class Chrestenson(cirq.SingleQubitGate):
             return self
         return NotImplemented
 
-    def _circuit_diagram_info(self,args):
+    def _circuit_diagram_info_(self,args):
         return cirq.CircuitDiagramInfo('[C_r]')
     
 
@@ -181,6 +181,6 @@ class ZGate(cirq.SingleQubitGate):
             return ZGate(self.dimension, self.increment * exponent)
         return NotImplemented
 
-    def _circuit_diagram_info(self,args):
+    def _circuit_diagram_info_(self,args):
         return cirq.CircuitDiagramInfo(('[Z {:+d}]'.format(self.increment),))
 
