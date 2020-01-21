@@ -5,5 +5,5 @@
 # Mac files
 .DS_Store
 
-#cache files
+# cache files
 __pycache__/

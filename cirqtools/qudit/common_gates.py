@@ -146,43 +146,41 @@ class Chrestenson(cirq.SingleQubitGate):
     def _qid_shape_(self):
         return (self.dimension,)
 
-    def num_qubits(self):
-        return 1
-
     def _unitary_(self):
-        u = np.empty((self.dimension,self.dimension),dtype=np.complex_)
-        for i in range(0,self.dimension):
-            for k in range(0,self.dimension):
-                u[i,k] = np.exp(2*np.pi*(0+1j)*i/self.dimension)**k
-        
-        return 1/np.sqrt(self.dimension)*u
+        idx = np.arange(self.dimension, dtype=np.complex128)
+        u = idx[:, np.newaxis] * idx[np.newaxis, :]
+        u *= 2j*np.pi/self.dimension
+        np.exp(u, out=u)
+        u /= np.sqrt(self.dimension)
+        return u
+
+    def __pow__(self, exponent):
+        if exponent % 2 == 1:
+            return self
+        return NotImplemented
 
     def _circuit_diagram_info(self,args):
         return cirq.CircuitDiagramInfo('[C_r]')
     
 
 class ZGate(cirq.SingleQubitGate):
-    def __init__(self,dimension,degree):
+    def __init__(self,dimension,increment=1):
         self.dimension = dimension
-        self.degree = degree
+        self.increment = increment
 
     def _qid_shape_(self):
         return (self.dimension,)
 
-    def num_qubits(self):
-        return 1
-
     def _unitary_(self):
-        u = np.zeros((self.dimension,self.dimension),dtype=np.complex_)
-        for i in range(0,self.dimension):
-            for k in range(0,self.dimension):
-                if i == k:
-                    u[i,k] = np.exp(2*np.pi*(0+1j)*i/self.dimension)
-        
-        u = np.linalg.matrix_power(u, self.degree)
+        u = np.diag(np.exp(np.linspace(0, self.increment*2j*np.pi, self.dimension,endpoint=False, dtype=np.complex128)))
         
         return u
 
+    def __pow__(self, exponent):
+        if exponent % 1 == 0:
+            return ZGate(self.dimension, self.increment * exponent)
+        return NotImplemented
+
     def _circuit_diagram_info(self,args):
-        return cirq.CircuitDiagramInfo(('[Z{:+d}]'.format(self.degree),))
+        return cirq.CircuitDiagramInfo(('[Z {:+d}]'.format(self.increment),))
 
