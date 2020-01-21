@@ -160,7 +160,7 @@ class Chrestenson(cirq.SingleQubitGate):
         return NotImplemented
 
     def _circuit_diagram_info_(self,args):
-        return cirq.CircuitDiagramInfo('[C_r]')
+        return cirq.CircuitDiagramInfo(('[C_r]',))
     
 
 class ZGate(cirq.SingleQubitGate):
